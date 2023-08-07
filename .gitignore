@@ -2,3 +2,5 @@
 build
 Testing
 .DS_store
+external
+scripts
