@@ -10,7 +10,7 @@
 
 #define hardware_destructive_interference_size 128
 
-namespace disruptor{
+namespace disruptor {
 
 	//---------------------------------------------------------------------------
 	// Alignment to  avoid false sharing.
@@ -19,14 +19,14 @@ namespace disruptor{
 	// In the tested mac OS, the cache line is 128 Bytes.
 	// Additional information about the data such as whether it is the last in a stream is included.
 	template <typename Elem>
-	class alignas(hardware_destructive_interference_size) Sequence{
+	class alignas(hardware_destructive_interference_size) Sequence {
 	public:
 		bool	is_eof() const		{ return is_eof_;}
 		void	set_eof(bool eof)	{ is_eof_ = eof;}
 		Elem&	data()				{ return data_;}
 	private:
-		Elem	data_			{}; // Zero initialisation.
-		bool	is_eof_			{false};	
+		Elem	data_				{}; // Zero initialisation.
+		bool	is_eof_				{false};	
 	};
 
 	//---------------------------------------------------------------------------
@@ -39,7 +39,7 @@ namespace disruptor{
 	public:
 		class iterator {
 		public:
-			using _iter 	= typename std::array<Sequence<Elem>,N>::const_iterator;
+			using 			_iter 										= typename std::array<Sequence<Elem>,N>::const_iterator;
 			
 			constexpr 		iterator() = default;
 			constexpr 		iterator(_iter begin, size_t own_pos)		: begin_(std::move(begin)), own_pos_(own_pos) {}
@@ -85,7 +85,6 @@ namespace disruptor{
 
 	namespace detail 
 	{
-
 		//---------------------------------------------------------------------------
 
 		enum PublishUpdateStatus{SUCCESS, ERROR, NO_SPACE};
@@ -94,7 +93,7 @@ namespace disruptor{
 		struct Reservation {
 
 			Reservation(size_t begin, size_t end)		: pos_begin(begin), pos_end(end), is_initialised(true)	{}
-			Reservation() 					= default;	
+			Reservation() 								= default;	
 
 			size_t 		pos_begin{};
 			size_t 		pos_end{};
@@ -114,15 +113,15 @@ namespace disruptor{
 			static constexpr 			size_t 			LIM = 20;
 		public:
 			// Subscribers must not be greater than 200.
-			constexpr		CursorUpdateHelper() 								= default;
-							CursorUpdateHelper(const std::string& type)			:type_(type)	{}
+			constexpr				CursorUpdateHelper() 								= default;
+									CursorUpdateHelper(const std::string& type)			:type_(type)	{}
 
 			// Thread-safe.
 			PublishUpdateStatus 	UpdateCursor(const size_t pos_begin, const size_t pos_end);
 
-			size_t 			cursor() const 		{ return cursor_.load(std::memory_order_acquire); }
+			size_t 					cursor() const 		{ return cursor_.load(std::memory_order_acquire); }
 
-			void 			Reset() 			{ cursor_ = 0;	std::fill( unprocessed_reservations_.begin(), unprocessed_reservations_.end(), Reservation{} ); }
+			void 					Reset() 			{ cursor_ = 0;	std::fill( unprocessed_reservations_.begin(), unprocessed_reservations_.end(), Reservation{} ); }
 			
 			friend std::ostream& 	operator<< <>(std::ostream&, const CursorUpdateHelper&);
 		private:
@@ -226,11 +225,11 @@ public:
 							read_cursor_			(read_cursor) 
 							{}
 
-	_BufferIter 		begin;
+	_BufferIter 			begin;
 	// As with standard convention, end is not part of the data to be read.
-	_BufferIter 		end;
-	bool 				err {true}; // Default must be true. Don't change.
-	void 				Release() {if (read_cursor_) { read_cursor_->Publish(start_, end_);}}
+	_BufferIter 			end;
+	bool 					err {true}; // Default must be true. Don't change.
+	void 					Release() {if (read_cursor_) { read_cursor_->Publish(start_, end_);}}
 private:
 	size_t 					start_;
 	size_t 					end_;
@@ -284,14 +283,14 @@ private:
 //---------------------------------------------------------------------------
 template <typename Elem, PublishPolicy _WP, PublishPolicy _RP>
 class Writer {
-	using _ReadWriterSPtr = typename ReaderWriter<Elem,  _WP, _RP>::SPtr;
+	using 				_ReadWriterSPtr 						= typename ReaderWriter<Elem,  _WP, _RP>::SPtr;
 
 public:
-	constexpr	Writer(_ReadWriterSPtr  reader_writer)	: reader_writer_(std::move(reader_writer)){}
+	constexpr			Writer(_ReadWriterSPtr  reader_writer)	: reader_writer_(std::move(reader_writer)){}
 
 	// Blocking write with universal forwarding.
-	bool 		Write(Elem&& data, bool is_eof=false) 	{ return reader_writer_->Write(std::forward<Elem>(data),is_eof); }
-	size_t 		GetCursor() const 						{ return reader_writer_->GetWriteCursor();}
+	bool 				Write(Elem&& data, bool is_eof=false) 	{ return reader_writer_->Write(std::forward<Elem>(data),is_eof); }
+	size_t 				GetCursor() const 						{ return reader_writer_->GetWriteCursor();}
 private:
 	_ReadWriterSPtr 	reader_writer_;
 };
@@ -299,7 +298,7 @@ private:
 //---------------------------------------------------------------------------
 template <typename Elem, PublishPolicy _WP, PublishPolicy _RP>
 class Reader {
-	using 	_ReadWriterSPtr = typename ReaderWriter<Elem,  _WP, _RP>::SPtr;
+	using 					_ReadWriterSPtr 							= typename ReaderWriter<Elem,  _WP, _RP>::SPtr;
 public:
 	constexpr				Reader (_ReadWriterSPtr reader_writer)		:reader_writer_(std::move(reader_writer)){}
 
@@ -311,8 +310,8 @@ private:
 //---------------------------------------------------------------------------
 template <typename Elem, PublishPolicy _WP, PublishPolicy _RP>
 class SingleDisruptor{
-	using _ReaderWriterT = typename ReaderWriter<Elem, _WP, _RP>::SPtr;
-	using _RingBufferT = typename RingBuffer<Elem>::SPtr;
+	using 				_ReaderWriterT		= typename ReaderWriter<Elem, _WP, _RP>::SPtr;
+	using 				_RingBufferT 		= typename RingBuffer<Elem>::SPtr;
 public:
 	constexpr 			SingleDisruptor(	_ReaderWriterT 		reader_writer, 
 											_RingBufferT 		buffer)
