@@ -74,7 +74,7 @@ namespace disruptor {
 	// to catch up before they can resume reading or writing.
 	// Rather than using a busy wait which blocks, one can buffer up update requests and move onto another read or write.
 	// When the update request buffer is full then the reader or write will resort to busy waits.
-	enum PublishPolicy{BUFFERED = 0, BLOCK};
+	enum class PublishPolicy{BUFFERED = 0, BLOCK};
 
 	//---------------------------------------------------------------------------
 	struct ReservationInfo {
@@ -87,7 +87,7 @@ namespace disruptor {
 	{
 		//---------------------------------------------------------------------------
 
-		enum PublishUpdateStatus{SUCCESS, ERROR, NO_SPACE};
+		enum class PublishUpdateStatus{SUCCESS, ERROR, NO_SPACE};
 
 		//---------------------------------------------------------------------------
 		struct Reservation {

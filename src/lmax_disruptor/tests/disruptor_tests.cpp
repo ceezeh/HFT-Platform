@@ -48,7 +48,7 @@ TEST_CASE("TEST BUFFERED CURSOR HELPER IN PARALLEL") {
 
 	for (size_t i = 1; i < NoOfWriters; ++i) {
 		if (futures[i].valid())
-			REQUIRE(futures[i].get() != disruptor::detail::ERROR);
+			REQUIRE(futures[i].get() != disruptor::detail::PublishUpdateStatus::ERROR);
 	}
 
 	auto fn = [&]() {
