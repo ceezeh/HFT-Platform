@@ -1,5 +1,6 @@
 if(ENABLE_TESTING)
-    set(UNIT_TEST_NAME disruptor_tests)
+    set(UNIT_TEST_NAME disruptor_tests)    
+
     set(TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/disruptor_tests.cpp")
     set(TEST_HEADERS "")
 
@@ -40,5 +41,12 @@ if(ENABLE_TESTING)
             ${UNIT_TEST_NAME})
     endif()
 
+    set(BENCHMARK_TEST_NAME disruptor_benchmark_tests)
+    set(TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/${BENCHMARK_TEST_NAME}.cpp")
+    add_executable(${BENCHMARK_TEST_NAME} ${TEST_SOURCES} ${TEST_HEADERS})
+    target_link_libraries(${BENCHMARK_TEST_NAME} PUBLIC ${LIBRARY_NAME})
 
+    find_package(benchmark REQUIRED)
+    target_link_libraries(${BENCHMARK_TEST_NAME} PRIVATE benchmark::benchmark)
+    add_test(NAME ${BENCHMARK_TEST_NAME} COMMAND ${BENCHMARK_TEST_NAME})
 endif()

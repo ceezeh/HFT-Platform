@@ -1,12 +1,12 @@
 #include <chrono>
+#include <deque>
+#include <future>
 #include <ostream>
 #include <vector>
-#include <deque>
 
-#include "scoped_profiler.hpp"
 #include "barrier.hpp"
-
-
+#include "disruptor.hpp"
+#include "scoped_profiler.hpp"
 
 namespace tests{
     bool WAIT_TEST (auto fn) {
@@ -49,9 +49,9 @@ namespace tests{
 
     //---------------------------------------------------------------------------
     profiler::Stats TimedDisruptorTask (const size_t NoOfWriters, const size_t NoOfWritesPerWriter) {
-        using WriterType = disruptor::Writer<size_t, disruptor::PublishPolicy::BLOCK, disruptor::PublishPolicy::BUFFERED>;
+        using WriterType = disruptor::Writer<size_t, disruptor::PublishPolicy::BLOCK, disruptor::PublishPolicy::BLOCK>;
 
-		auto disruptor = disruptor::MakeSingleDisruptor<size_t, disruptor::PublishPolicy::BLOCK, disruptor::PublishPolicy::BUFFERED>();
+		auto disruptor = disruptor::MakeSingleDisruptor<size_t, disruptor::PublishPolicy::BLOCK, disruptor::PublishPolicy::BLOCK>();
 		std::vector<WriterType>  writers;
 		writers.reserve(NoOfWriters);
 

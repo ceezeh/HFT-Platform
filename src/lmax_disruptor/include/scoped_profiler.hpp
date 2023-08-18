@@ -3,7 +3,9 @@
 #include <vector>
 #include <chrono>
 #include <mutex>
-
+#include <iostream>
+#include <thread>
+#include <cmath>
 namespace profiler{
 
     std::mutex lock;

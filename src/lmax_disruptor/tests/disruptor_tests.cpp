@@ -2,16 +2,15 @@
 #include "disruptor.hpp"
 
 #include <array>
-#include <catch2/catch.hpp>
-
 #include <future>
 #include <iostream>
-#include <numeric>
 #include <limits>
+#include <numeric>
+
+#include <catch2/catch.hpp>
 
 #include "barrier.hpp"
 #include "scoped_profiler.hpp"
-
 #include "test_helpers.hpp"
 
 TEST_CASE("TEST BUFFERED CURSOR HELPER SEQUENTIALLY") {

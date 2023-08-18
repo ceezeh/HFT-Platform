@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.5.1)
 
 project(
     "HFT Trading System"
@@ -89,6 +89,9 @@ else(USE_CPM)
     cpmaddpackage("gh:catchorg/Catch2@2.13.9")
     cpmaddpackage("gh:jarro2783/cxxopts@3.1.1")
     cpmaddpackage("gh:gabime/spdlog@1.11.0")
+    cpmaddpackage(NAME benchmark 
+                OPTIONS "BENCHMARK_DOWNLOAD_DEPENDENCIES on" 
+        "gh:google/benchmark@1.8.2")
 endif()
 
 # SUB DIRECTORIES
