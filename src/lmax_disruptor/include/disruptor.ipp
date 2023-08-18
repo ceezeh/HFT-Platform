@@ -18,13 +18,18 @@ namespace {
 	std::mutex mprint;
 	template <typename... Ts>
 	void Print(const Ts&... ts) {
-		
 		std::scoped_lock lk (mprint);
 		((std::cout << ts),...); 
 	}
 	#else
 	#define Print(...) 
 	#endif
+
+//---------------------------------------------------------------------------
+	template <typename T>
+	T Min( T a, T b) {
+		return (a<b)? a:b;
+	} 
 }
 
 namespace detail{
@@ -87,7 +92,7 @@ namespace detail{
 			while( std::find_if(unprocessed_reservations_.begin(), unprocessed_reservations_.end(), 
 				[&](Reservation& reservation)
 				{
-					if (reservation.is_initialised && reservation.pos_begin == target) 
+					if (reservation.is_initialised && reservation.pos_begin == target) [[unlikely]]
 					{
 						target = reservation.pos_end;
 						reservation.is_initialised = false;
@@ -105,7 +110,7 @@ namespace detail{
 					,", pos_begin:", pos_begin 
 					,", pos_end: ", pos_end
 					,'\n');		
-				cursor_= target;				
+				cursor_.store(target, std::memory_order_release);				
 		} else 
 		{
 			// store sequence object in array.
@@ -168,7 +173,7 @@ ReservationInfo WriteCursor<Elem, _WP>::Reserve(const Cursor<Derived, Elem, P2>&
 		
 		size_t claim_capacity =  this->buffer_->size() - (expected - read_cursor_seq);
 
-		new_sequence = expected + std::min(claim_capacity, no_of_slots);
+		new_sequence = expected + Min(claim_capacity ,no_of_slots);
 		return claim_capacity == 0;
 	};
 	
@@ -232,7 +237,7 @@ ReservationInfo ReadCursor<Elem, _RP>::Reserve(const Cursor<Derived, Elem, P2>& 
 		assert(write_cursor_seq >= expected);
 		size_t claim_capacity = write_cursor_seq - expected;
 
-		new_sequence = expected	+ std::min(claim_capacity, no_of_slots);
+		new_sequence = expected	+ Min(claim_capacity, no_of_slots);
 		return claim_capacity==0;
 	};
 	

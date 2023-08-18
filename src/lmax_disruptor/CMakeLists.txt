@@ -8,13 +8,13 @@ target_link_libraries(
     ${LIBRARY_NAME} 
     INTERFACE stdc++) 
 
-if(${ENABLE_LTO})
-    target_enable_lto(
-        TARGET
-        ${LIBRARY_NAME}
-        ENABLE
-        ON)
-endif()
+# if(${ENABLE_LTO})
+#     target_enable_lto(
+#         TARGET
+#         ${LIBRARY_NAME}
+#         ENABLE
+#         ON)
+# endif()
 
 if(${ENABLE_CLANG_TIDY})
     add_clang_tidy_to_target(${LIBRARY_NAME})
