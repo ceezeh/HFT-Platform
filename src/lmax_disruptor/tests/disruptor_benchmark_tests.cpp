@@ -11,14 +11,20 @@ static void BM_Queue3Readers1Writer(benchmark::State& state) {
     }
 }
 
+static void BM_LMAX3Readers1WriterBaseline(benchmark::State& state) {
+    for (auto _ : state) {
+        auto disruptor_stats = tests::TimedDisruptorTask ( NoOfWriters,  NoOfWritesPerWriter, false);
+    }
+}
+
 static void BM_LMAX3Readers1Writer(benchmark::State& state) {
     for (auto _ : state) {
         auto disruptor_stats = tests::TimedDisruptorTask ( NoOfWriters,  NoOfWritesPerWriter);
     }
 }
 
-
 BENCHMARK(BM_Queue3Readers1Writer);
+BENCHMARK(BM_LMAX3Readers1WriterBaseline);
 BENCHMARK(BM_LMAX3Readers1Writer);
 
 BENCHMARK_MAIN();

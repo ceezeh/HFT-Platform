@@ -48,7 +48,7 @@ namespace tests{
     };
 
     //---------------------------------------------------------------------------
-    profiler::Stats TimedDisruptorTask (const size_t NoOfWriters, const size_t NoOfWritesPerWriter) {
+    profiler::Stats TimedDisruptorTask (const size_t NoOfWriters, const size_t NoOfWritesPerWriter, const bool bl_disable = true) {
         using WriterType = disruptor::Writer<size_t, disruptor::PublishPolicy::BLOCK, disruptor::PublishPolicy::BLOCK>;
 
 		auto disruptor = disruptor::MakeSingleDisruptor<size_t, disruptor::PublishPolicy::BLOCK, disruptor::PublishPolicy::BLOCK>();
@@ -66,7 +66,10 @@ namespace tests{
             size_t data_t = data;
             for (size_t i = 0; i < NoOfWritesPerWriter; ++i) {	
                 size_t d = data_t;
-                while(writer.Write(std::forward<size_t>(d))) {}					
+                if (bl_disable) {
+                    while(writer.Write(std::forward<size_t>(d))) {}	
+                }
+                				
                 ++data_t;
             }
         };
@@ -87,15 +90,17 @@ namespace tests{
         profiler::Timer timer;
         
         timer.Start();
-        while (sink.size() < NoOfWriters*NoOfWritesPerWriter) 
-        {
-            auto read_result = reader.Read(128);
-            if (read_result.err) {continue;}
-            for (auto iter = read_result.begin; iter != read_result.end; ++iter) 
+        if (bl_disable) {
+            while (sink.size() < NoOfWriters*NoOfWritesPerWriter) 
             {
-                sink.push_back((*iter).data());
+                auto read_result = reader.Read(128);
+                if (read_result.err) {continue;}
+                for (auto iter = read_result.begin; iter != read_result.end; ++iter) 
+                {
+                    sink.push_back((*iter).data());
+                }
+                read_result.Release();
             }
-            read_result.Release();
         }
         timer.Stop();
 
