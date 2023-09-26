@@ -40,7 +40,7 @@ This is a HFT platform project being built for learning. It has the following ge
 │   └── lmax_disruptor
 |       ├── CMakesLists.txt
 |       ├── lmax_disruptor.hpp
-│       └── lmax_disruptor.tpp
+│       └── lmax_disruptor.ipp
 └── tests
     ├── CMakeLists.txt
     └── disruptor_tests.cpp
